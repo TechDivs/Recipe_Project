@@ -1,0 +1,293 @@
+// ============================================================
+// CLOUD COMPUTING LAB
+// AIM:
+// Design and deploy a static website on AWS EC2.
+// Configure networking and server settings so that
+// the website is publicly accessible and remotely manageable.
+// ============================================================
+
+
+
+// ============================================================
+// STEP 1: LOGIN TO AWS
+// ============================================================
+
+// Open AWS Console:
+// https://aws.amazon.com/console/
+
+// Login using your AWS account credentials.
+
+
+
+// ============================================================
+// STEP 2: LAUNCH EC2 INSTANCE
+// ============================================================
+
+// Open EC2 Dashboard.
+
+// Click:
+// Launch Instance
+
+// Configure instance:
+
+// Name:
+// StaticWebsiteServer
+
+// AMI:
+// Ubuntu Server 22.04 LTS
+
+// Instance Type:
+// t2.micro (Free Tier)
+
+// Key Pair:
+// Create new key pair
+// Example:
+// test.pem
+
+// Network Settings:
+// Enable Public IP
+
+// Security Group Rules:
+// ----------------------------------
+// SSH   -> Port 22 -> My IP
+// HTTP  -> Port 80 -> Anywhere
+// HTTPS -> Port 443 -> Anywhere
+// ----------------------------------
+
+// Click:
+// Launch Instance
+
+
+
+// ============================================================
+// STEP 3: CONNECT TO EC2 INSTANCE
+// ============================================================
+
+// Open terminal in WSL/Linux.
+
+// IMPORTANT:
+// If the .pem file is inside /mnt/d or Windows drive,
+// SSH may reject permissions.
+
+// Copy pem file to home directory:
+
+cp test.pem ~/
+
+
+// Move to home directory:
+
+cd ~/
+
+
+// Change permissions:
+
+chmod 400 test.pem
+
+
+// Connect to EC2 using SSH:
+
+ssh -i test.pem ubuntu@<PUBLIC-IP>
+
+
+// Example:
+
+ssh -i test.pem ubuntu@13.200.255.27
+
+
+
+// ============================================================
+// STEP 4: UPDATE EC2 SERVER
+// ============================================================
+
+// Update package lists:
+
+sudo apt update
+
+
+// Upgrade installed packages:
+
+sudo apt upgrade -y
+
+
+
+// ============================================================
+// STEP 5: INSTALL NGINX WEB SERVER
+// ============================================================
+
+// Install nginx:
+
+sudo apt install nginx -y
+
+
+// Start nginx service:
+
+sudo systemctl start nginx
+
+
+// Enable nginx on boot:
+
+sudo systemctl enable nginx
+
+
+// Check nginx status:
+
+sudo systemctl status nginx
+
+
+
+// ============================================================
+// STEP 6: VERIFY WEBSITE ACCESS
+// ============================================================
+
+// Open browser and visit:
+
+http://<PUBLIC-IP>
+
+
+// Example:
+
+http://13.200.255.27
+
+
+// Nginx welcome page should appear.
+
+
+
+// ============================================================
+// STEP 7: DEPLOY STATIC WEBSITE
+// ============================================================
+
+// Move to nginx web directory:
+
+cd /var/www/html
+
+
+// Remove default nginx page:
+
+sudo rm index.nginx-debian.html
+
+
+// Create website file:
+
+sudo nano index.html
+
+
+
+// ============================================================
+// STEP 8: WRITE HTML CODE
+// ============================================================
+
+// Paste the following HTML:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Computing Lab</title>
+</head>
+<body>
+
+    <h1>Static Website Hosted on AWS EC2</h1>
+
+    <p>
+        Successfully deployed using Ubuntu and Nginx.
+    </p>
+
+</body>
+</html>
+
+
+// Save file:
+
+// CTRL + O
+// ENTER
+// CTRL + X
+
+
+
+// ============================================================
+// STEP 9: ACCESS DEPLOYED WEBSITE
+// ============================================================
+
+// Open browser:
+
+http://<PUBLIC-IP>
+
+
+// Example:
+
+http://13.200.255.27
+
+
+// Your custom static website should now appear.
+
+
+
+// ============================================================
+// STEP 10: REMOTE WEBSITE UPDATE
+// ============================================================
+
+// Connect again using SSH:
+
+ssh -i test.pem ubuntu@<PUBLIC-IP>
+
+
+// Edit website:
+
+sudo nano /var/www/html/index.html
+
+
+// Save changes and refresh browser.
+
+
+
+// ============================================================
+// OPTIONAL: UPLOAD FILES USING SCP
+// ============================================================
+
+// Upload local file to EC2:
+
+scp -i test.pem index.html ubuntu@<PUBLIC-IP>:/tmp
+
+
+// Move uploaded file:
+
+sudo mv /tmp/index.html /var/www/html/
+
+
+
+// ============================================================
+// NETWORKING CONFIGURATION SUMMARY
+// ============================================================
+
+// Public IP:
+// Allows internet access to EC2 instance.
+
+// Security Group:
+// Acts as firewall for EC2.
+
+// Port 22:
+// Used for SSH remote management.
+
+// Port 80:
+// Used for HTTP website access.
+
+// Port 443:
+// Used for HTTPS secure website access.
+
+
+
+// ============================================================
+// RESULT
+// ============================================================
+
+// Static website successfully deployed on AWS EC2.
+
+// Website is publicly accessible through browser.
+
+// Website can be remotely updated using SSH.
+
+
+
+// ============================================================
+// END
+// ============================================================
