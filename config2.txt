@@ -1,0 +1,75 @@
+CC Practical: Secure File Sharing Between Cloud Instances (AWS EC2)
+
+1. Launch Two EC2 Instances
+--------------------------------
+- Region: Same region (example: Mumbai ap-south-1)
+- OS: Ubuntu
+- Instance type: t2.micro
+- Same VPC and same subnet
+
+2. Configure Security Group
+--------------------------------
+Allow:
+- SSH (Port 22) from your IP
+- Internal communication between instances
+
+3. Connect to Instance 1
+--------------------------------
+Move PEM file to Linux home directory:
+
+cp test2.pem ~/
+cd ~
+chmod 400 test2.pem
+
+Connect using SSH:
+
+ssh -i test2.pem ubuntu@INSTANCE1_PUBLIC_IP
+
+4. Copy PEM Key to Instance 1
+--------------------------------
+From local machine:
+
+scp -i ~/test2.pem ~/test2.pem ubuntu@INSTANCE1_PUBLIC_IP:/home/ubuntu/
+
+5. Login Again to Instance 1
+--------------------------------
+ssh -i ~/test2.pem ubuntu@INSTANCE1_PUBLIC_IP
+
+Inside Instance 1:
+
+chmod 400 test2.pem
+
+6. Create Sample File
+--------------------------------
+echo "hello" > file.txt
+
+7. Transfer File Securely to Instance 2
+--------------------------------
+Use PRIVATE IP of Instance 2:
+
+scp -i test2.pem file.txt ubuntu@INSTANCE2_PRIVATE_IP:/home/ubuntu/
+
+8. Verify on Instance 2
+--------------------------------
+Login to Instance 2:
+
+ssh -i ~/test2.pem ubuntu@INSTANCE2_PUBLIC_IP
+
+Check file:
+
+cat file.txt
+
+9. Security Cleanup
+--------------------------------
+Delete copied key from Instance 1:
+
+rm test2.pem
+
+Concepts Used
+--------------------------------
+- EC2 Instances
+- Virtual Private Cloud (VPC)
+- SSH
+- SCP (Secure Copy Protocol)
+- Private IP communication
+- File permissions using chmod 400
